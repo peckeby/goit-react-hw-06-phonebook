@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { getContacts } from '../redux/selectors';
@@ -13,10 +12,6 @@ import { Container } from './Container/Container.styled';
 
 export const App = () => {
   const contacts = useSelector(getContacts);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
 
   return (
     <>
