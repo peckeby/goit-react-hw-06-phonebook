@@ -1,8 +1,7 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/contactsSlice';
-import { setUserName } from 'redux/nameSlice';
-import { setUserNumber } from 'redux/numberSlice';
-import { getContacts, getName, getNumber } from 'redux/selectors';
+import { getContacts } from 'redux/selectors';
 
 import {
   Form,
@@ -15,8 +14,8 @@ export default function ContactForm() {
   const dispatch = useDispatch();
 
   const contacts = useSelector(getContacts);
-  const number = useSelector(getNumber);
-  const name = useSelector(getName);
+  const [userNumber, setUserNumber] = useState('');
+  const [userName, setUserName] = useState('');
 
   const fiterChange = filter => {
     return contacts.filter(contact => contact.name.includes(filter));
@@ -26,10 +25,10 @@ export default function ContactForm() {
     const { name, value } = event.target;
     switch (name) {
       case 'userName':
-        dispatch(setUserName(value));
+        setUserName(value);
         break;
       case 'userNumber':
-        dispatch(setUserNumber(value));
+        setUserNumber(value);
         break;
       default:
         return;
@@ -38,13 +37,13 @@ export default function ContactForm() {
 
   const handleSubmit = evt => {
     evt.preventDefault();
-    if (contacts.length > 0 && fiterChange(name).length > 0) {
-      alert(`${name} is already in contacts.`);
+    if (contacts.length > 0 && fiterChange(userName).length > 0) {
+      alert(`${userName} is already in contacts.`);
     } else {
-      dispatch(addContact(name, number));
+      dispatch(addContact(userName, userNumber));
     }
-    dispatch(setUserNumber(''));
-    dispatch(setUserName(''));
+    setUserNumber('');
+    setUserName('');
   };
 
   return (
@@ -55,7 +54,7 @@ export default function ContactForm() {
           type="text"
           name="userName"
           onChange={onHandleChange}
-          value={name}
+          value={userName}
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
@@ -67,7 +66,7 @@ export default function ContactForm() {
           type="tel"
           name="userNumber"
           onChange={onHandleChange}
-          value={number}
+          value={userNumber}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
